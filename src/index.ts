@@ -41,16 +41,13 @@ export class FutureEitherInstance<L, R> {
     )
   }
 
+  toValue(): FutureInstance<L, R> {
+    // @ts-ignore
+    return this.futureEither.chain(fe => fe)
+  }
+
   toPromiseValue<R>(): Promise<R> {
     return this.futureEither
-      .chain(m => {
-        console.log('chain================', m)
-        return Future.of(m)
-      })
-      .chainRej(r => {
-        console.log('rej ==================', r)
-        return Future.reject(r)
-      })
       // @ts-ignore
       .chain<R>(fe => fe)
       .promise()

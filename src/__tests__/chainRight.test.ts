@@ -1,12 +1,18 @@
 import FutureEither from '../index'
 import Future from 'fluture'
 
-describe('chainRight()', () => {
+describe('Right-Value', () => {
   // generate a resolved Promise as a Right-Value
   let p1 = FutureEither.fromPromise((num: number) => {
     return Promise.resolve(num)
   })
 
+  test('should resolve original value', async () => {
+    const p = p1(20)
+      .toPromiseValue()
+
+    await expect(p).resolves.toEqual(20)
+  })
   test('should resolve value correctly', async () => {
     const testValue = 20
 
@@ -36,16 +42,18 @@ describe('chainRight()', () => {
       .chainLeft(() => Future.of(new Error('error')))
       .chainRight((n: number) => Future.of(n / 2))
       .chainLeft(() => Future.of(new Error('error2')))
+      .chainRight((n: number) => Future.of(n * 3))
       .toPromiseValue()
 
-    await expect(p).resolves.toEqual(testValue)
+    await expect(p).resolves.toEqual(testValue * 3)
   })
 
   test('should reject due to error', async () => {
     const testValue = 30
     const p = p1(testValue)
-      .chainRight(() => Future.reject(new Error('err01')))
       .chainRight(n => Future.of(n))
+      .chainRight(() => Future.reject(new Error('err01')))
+      .chainRight(() => Future.reject(new Error('err02')))
       .toPromiseValue()
 
     await expect(p).rejects.toThrowError("err01")

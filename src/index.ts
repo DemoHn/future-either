@@ -15,8 +15,7 @@ export class FutureEitherInstance<L, R> {
     return new FutureEitherInstance(
       this.futureEither.chain(
         fe => fe
-          // @ts-ignore
-          .chain(rv => Future.of(Future.of(rv)))
+          .map(rv => Future.of(rv))
           // @ts-ignore
           .chainRej(lv => mapper(lv)
             .chain((v: V) => Future.of(Future.reject(v)))
@@ -31,12 +30,15 @@ export class FutureEitherInstance<L, R> {
       this.futureEither.chain(
         fe => fe
           // @ts-ignore
-          .chainRej(lv => Future.of(Future.reject(lv)))
+          // swap(): to prevent F<{}, F<L, {}>> affected .chain() flow which should NOT be executed at all!
+          .chainRej(lv => Future.of(Future.reject(lv)).swap())
           // @ts-ignore
           .chain(rv => mapper(rv)
             .chain((v: V) => Future.of(Future.of(v)))
             .chainRej((e: {}) => Future.reject(e))
+            .swap()
           )
+          .swap()
       )
     )
   }

@@ -4,6 +4,7 @@
       "es2015",
       "dom"
     ],
+    "target": "es2016",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",

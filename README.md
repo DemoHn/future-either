@@ -24,6 +24,13 @@ For 3#, error should throw immediately.
 
 ## API
 
+#### fromFuture
+```hs
+FutureEither.fromFuture  :: Future<L, R> -> FutureEither<E, L, R> 
+```
+
+Construct a `FutureEither` object from existing `Future` instance.
+
 #### fromPromise
 
 ```hs

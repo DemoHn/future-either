@@ -4,13 +4,13 @@ import * as Future from 'fluture'
 export type FutureEitherType<L, R> = FutureInstance<{}, FutureInstance<L, R>>
 
 export class FutureEitherInstance<L, R> {
-  futureEither: FutureEitherType<L, R>
+  public futureEither: FutureEitherType<L, R>
 
   constructor(futureEither: FutureEitherType<L, R>) {
     this.futureEither = futureEither
   }
 
-  chainLeft<V>(mapper: (a: L) => FutureInstance<{}, V>): FutureEitherInstance<V, R> {
+  public chainLeft<V>(mapper: (a: L) => FutureInstance<{}, V>): FutureEitherInstance<V, R> {
     return new FutureEitherInstance(
       this.futureEither.chain(
         fe => fe
@@ -24,7 +24,7 @@ export class FutureEitherInstance<L, R> {
     )
   }
 
-  chainRight<V>(mapper: (a: R) => FutureInstance<{}, V>): FutureEitherInstance<L, V> {
+  public chainRight<V>(mapper: (a: R) => FutureInstance<{}, V>): FutureEitherInstance<L, V> {
     return new FutureEitherInstance(
       this.futureEither.chain(
         fe => fe
@@ -42,15 +42,15 @@ export class FutureEitherInstance<L, R> {
     )
   }
 
-  toValue(): FutureInstance<L, R> {
+  public toValue(): FutureInstance<L, R> {
     // @ts-ignore
     return this.futureEither.chain(fe => fe)
   }
 
-  toPromiseValue<R>(): Promise<R> {
+  public toPromiseValue(): Promise<R> {
     return this.futureEither
       // @ts-ignore
-      .chain<R>(fe => fe)
+      .chain(fe => fe)
       .promise()
   }
 }

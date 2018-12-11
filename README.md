@@ -2,7 +2,7 @@
 
 ## Overview
 
-`FutureEither` is an extension of the original `Future<L, R>` data type from [fluture](https://github.com/fluture-js/Fluture). It intends to control the flow of a tri-state object that contains `E`, `L`, `R` state. The definition of those states are stated as follows:
+`FutureEither` is an extension of the original `Future<L, R>` data type from [fluture](https://github.com/fluture-js/Fluture). It intends to control the flow of a tri-state object that contains `E`, `L`, `R` branches. The definition of those branches are stated as follows:
 
 ```
   E -> Fatal-Error, should be thrown immediately
@@ -24,4 +24,43 @@ For 3#, error should throw immediately.
 
 ## API
 
-`TODO`
+#### fromPromise
+
+```hs
+FutureEither.fromPromise  :: (A -> Promise<R>) -> (A -> FutureEither<E, L, R>)
+```
+Construct a function that returns a `FutureEither` object from a promise function.
+
+Notice: there will be only `L`, `R` branch of the `FutureEither` object, corresponding to `Promise.reject` and `Promise.resolve` respectively. `E` branch will not happen there.
+
+#### chainRight
+
+```hs
+FutureEither.prototype.chainRight  :: FutureEither<E, L, R> ~> (R -> Future<E, V>)   -> FutureEither<E, L, V> 
+```
+
+Sequence a new `FutureEither` object of the `R` value. It only applies to the `R` branch, that is, `L`, `E` branch will be ignored. 
+
+#### chainLeft
+
+```hs
+FutureEither.prototype.chainLeft  :: FutureEither<E, L, R> ~> (L -> Future<E, V>)   -> FutureEither<E, V, R>
+```
+
+Sequence a new `FutureEither` object of the `L` value. Similar to `chainRight()`, it only applies to the `L` branch, that is, `R`, `E` branch will be ignored.
+
+#### toValue
+
+```hs
+FutureEither.prototype.toValue  :: FutureEither<E, L, R> ~> Future<L, R>
+```
+
+Export the future instance with `L` or `R` branch for further operations.
+
+#### toPromiseValue
+
+```hs
+FutureEither.prototype.toPromiseValue :: FutureEither<E, L, R> ~> Promise<R>
+```
+
+Export the promise object of the future instance. Notice: both `E` and `L` branch will throw error!

@@ -1,8 +1,7 @@
 import { FutureInstance } from 'fluture'
 import * as Future from 'fluture'
 
-type FutureEitherType<L, R> = FutureInstance<{}, FutureInstance<L, R>>
-
+export type FutureEitherType<L, R> = FutureInstance<{}, FutureInstance<L, R>>
 
 export class FutureEitherInstance<L, R> {
   futureEither: FutureEitherType<L, R>

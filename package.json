@@ -1,6 +1,6 @@
 {
   "name": "future-either",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An extension type of 'Future<L, R>' to support tri-state object",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

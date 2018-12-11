@@ -33,6 +33,20 @@ Construct a function that returns a `FutureEither` object from a promise functio
 
 Notice: there will be only `L`, `R` branch of the `FutureEither` object, corresponding to `Promise.reject` and `Promise.resolve` respectively. `E` branch will not happen there.
 
+#### fromP2
+
+```hs
+FutureEither.fromP2  :: (A -> B -> Promise<R>) -> (A -> B -> FutureEither<E, L, R>)
+```
+Similar with `fromPromise`, but with 2 parameters.
+
+#### fromP3
+
+```hs
+FutureEither.fromP3  :: (A -> B -> C -> Promise<R>) -> (A -> B -> C -> FutureEither<E, L, R>)
+```
+Similar with `fromPromise`, but with 3 parameters.
+
 #### chainRight
 
 ```hs

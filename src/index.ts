@@ -21,7 +21,7 @@ export class FutureEitherInstance<L, R> {
             mapper(lv)
               .chain((v: V) => Future.of(Future.reject(v)))
               .chainRej((e: {}) => Future.reject(e)),
-        ),
+          ),
       ),
     );
   }
@@ -39,7 +39,7 @@ export class FutureEitherInstance<L, R> {
               .chain((v: V) => Future.of(Future.of(v)))
               .chainRej((e: {}) => Future.reject(e))
               .swap(),
-        )
+          )
           .swap(),
       ),
     );
@@ -65,5 +65,17 @@ export default {
     const futureP = Future.encaseP<L, R, A>(fn);
 
     return (a: A) => new FutureEitherInstance(Future.of(futureP(a)));
+  },
+
+  fromP2<L, R, A, B>(fn: (a: A, b: B) => Promise<R>): (a: A, b: B) => FutureEitherInstance<L, R> {
+    const futureP = Future.encaseP2<L, R, A, B>(fn);
+
+    return (a: A, b: B) => new FutureEitherInstance(Future.of(futureP(a, b)));
+  },
+
+  fromP3<L, R, A, B, C>(fn: (a: A, b: B, c: C) => Promise<R>): (a: A, b: B, c: C) => FutureEitherInstance<L, R> {
+    const futureP = Future.encaseP3<L, R, A, B, C>(fn);
+
+    return (a: A, b: B, c: C) => new FutureEitherInstance(Future.of(futureP(a, b, c)));
   },
 };

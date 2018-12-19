@@ -21,7 +21,7 @@ export class FutureEitherInstance<L, R> {
             mapper(lv)
               .chain((v: V) => Future.of(Future.reject(v)))
               .chainRej((e: any) => Future.reject(e)),
-          ),
+        ),
       ),
     );
   }
@@ -39,18 +39,34 @@ export class FutureEitherInstance<L, R> {
               .chain((v: V) => Future.of(Future.of(v)))
               .chainRej((e: any) => Future.reject(e))
               .swap(),
-          )
+        )
           .swap(),
       ),
     );
   }
 
   public chain(mapper: (a: FutureInstance<L, R>) => FutureEitherInstance<L, R>): FutureEitherInstance<L, R> {
-    return new FutureEitherInstance(this.futureEither.chain(future => mapper(future).futureEither));
+    return new FutureEitherInstance(
+      this.futureEither.chain(future => mapper(future).futureEither)
+    )
   }
 
   public chainRej(mapper: (a: any) => FutureEitherInstance<L, R>): FutureEitherInstance<L, R> {
-    return new FutureEitherInstance(this.futureEither.chainRej(future => mapper(future).futureEither));
+    return new FutureEitherInstance(
+      this.futureEither.chainRej(future => mapper(future).futureEither)
+    )
+  }
+
+  public mapLeft<V>(mapper: (a: L) => V): FutureEitherInstance<V, R> {
+    return new FutureEitherInstance(
+      this.futureEither.chain(fe => Future.of(fe.mapRej(mapper)))
+    )
+  }
+
+  public mapRight<V>(mapper: (a: R) => V): FutureEitherInstance<L, V> {
+    return new FutureEitherInstance(
+      this.futureEither.chain(fe => Future.of(fe.map(mapper)))
+    )
   }
 
   public toValue(): FutureInstance<L, R> {

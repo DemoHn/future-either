@@ -70,6 +70,27 @@ FutureEither.prototype.chainLeft  :: FutureEither<E, L, R> ~> (L -> Future<E, V>
 
 Sequence a new `FutureEither` object of the `L` value. Similar to `chainRight()`, it only applies to the `L` branch, that is, `R`, `E` branch will be ignored.
 
+#### mapRight
+
+```hs
+FutureEither.prototype.mapRight  :: FutureEither<E, L, R> ~> (R -> V)   -> FutureEither<E, L, V>
+```
+#### mapLeft
+
+```hs
+FutureEither.prototype.mapLeft  :: FutureEither<E, L, R> ~> (L -> V)   -> FutureEither<E, V, R>
+```
+#### chain
+
+```hs
+FutureEither.prototype.mapLeft  :: FutureEither<E, L, R> ~> (Future<L, R> -> FutureEither<E, L, R>)   -> FutureEither<E, L, R>
+```
+#### chainRej
+
+```hs
+FutureEither.prototype.mapLeft  :: FutureEither<E, L, R> ~> (E -> FutureEither<E, L, R>)   -> FutureEither<E, L, R>
+```
+
 #### toValue
 
 ```hs

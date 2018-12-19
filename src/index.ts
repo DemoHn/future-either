@@ -1,7 +1,7 @@
 import { FutureInstance } from 'fluture';
 import * as Future from 'fluture';
 
-export type FutureEitherType<L, R> = FutureInstance<{}, FutureInstance<L, R>>;
+export type FutureEitherType<L, R> = FutureInstance<any, FutureInstance<L, R>>;
 
 export class FutureEitherInstance<L, R> {
   public futureEither: FutureEitherType<L, R>;
@@ -10,7 +10,7 @@ export class FutureEitherInstance<L, R> {
     this.futureEither = futureEither;
   }
 
-  public chainLeft<V>(mapper: (a: L) => FutureInstance<{}, V>): FutureEitherInstance<V, R> {
+  public chainLeft<V>(mapper: (a: L) => FutureInstance<any, V>): FutureEitherInstance<V, R> {
     return new FutureEitherInstance(
       this.futureEither.chain(fe =>
         fe
@@ -20,29 +20,37 @@ export class FutureEitherInstance<L, R> {
             // @ts-ignore
             mapper(lv)
               .chain((v: V) => Future.of(Future.reject(v)))
-              .chainRej((e: {}) => Future.reject(e)),
+              .chainRej((e: any) => Future.reject(e)),
           ),
       ),
     );
   }
 
-  public chainRight<V>(mapper: (a: R) => FutureInstance<{}, V>): FutureEitherInstance<L, V> {
+  public chainRight<V>(mapper: (a: R) => FutureInstance<any, V>): FutureEitherInstance<L, V> {
     return new FutureEitherInstance(
       this.futureEither.chain(fe =>
         fe
           // @ts-ignore
-          // swap(): to prevent F<{}, F<L, {}>> affected .chain() flow which should NOT be executed at all!
+          // swap(): to prevent F<any, F<L, any>> affected .chain() flow which should NOT be executed at all!
           .chainRej(lv => Future.of(Future.reject(lv)).swap())
           // @ts-ignore
           .chain(rv =>
             mapper(rv)
               .chain((v: V) => Future.of(Future.of(v)))
-              .chainRej((e: {}) => Future.reject(e))
+              .chainRej((e: any) => Future.reject(e))
               .swap(),
           )
           .swap(),
       ),
     );
+  }
+
+  public chain(mapper: (a: FutureInstance<L, R>) => FutureEitherInstance<L, R>): FutureEitherInstance<L, R> {
+    return new FutureEitherInstance(this.futureEither.chain(future => mapper(future).futureEither));
+  }
+
+  public chainRej(mapper: (a: any) => FutureEitherInstance<L, R>): FutureEitherInstance<L, R> {
+    return new FutureEitherInstance(this.futureEither.chainRej(future => mapper(future).futureEither));
   }
 
   public toValue(): FutureInstance<L, R> {
